@@ -1,81 +1,113 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
+import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/forum', label: 'Forum' },
+    { href: '/contact', label: 'Contact' },
+  ];
 
   return (
-    <nav className="border-b border-zinc-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-zinc-900">
-          Forum
-        </Link>
+    <div className="relative">
+      {/* Main Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+          {/* Logo */}
+          <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors">
+            forum
+          </Link>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="relative">
-            <button
-              onClick={() => setLangOpen((v) => !v)}
-              className="rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-            >
-              EN
-            </button>
-
-            {langOpen && (
-              <div className="absolute right-0 mt-2 w-24 rounded-md border border-zinc-200 bg-white shadow-lg">
-                <button className="block w-full px-3 py-2 text-left text-sm hover:bg-zinc-50">EN</button>
-                <button className="block w-full px-3 py-2 text-left text-sm hover:bg-zinc-50">FR</button>
-                <button className="block w-full px-3 py-2 text-left text-sm hover:bg-zinc-50">DE</button>
-              </div>
-            )}
-          </div>
-
-          <button className="rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700">
-            Login
-          </button>
-
+          {/* Hamburger Menu Button */}
           <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="rounded-md border border-zinc-300 p-2 text-zinc-700 hover:bg-zinc-50"
-            aria-label="Open menu"
+            onClick={toggleMenu}
+            className="flex flex-col gap-1.5 focus:outline-none z-50 relative"
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
           >
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
-            </svg>
+            <span
+              className={`block h-0.5 w-6 bg-gray-900 transition-all duration-300 ${
+                isOpen ? 'rotate-45 translate-y-2' : ''
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-gray-900 transition-all duration-300 ${
+                isOpen ? 'opacity-0' : ''
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-gray-900 transition-all duration-300 ${
+                isOpen ? '-rotate-45 -translate-y-2' : ''
+              }`}
+            />
           </button>
+        </div>
+      </nav>
+
+      {/* Left Panel - Transparent */}
+      <div
+        className={`fixed left-0 top-0 bottom-0 w-64 bg-black/30 backdrop-blur-sm z-30 transition-all duration-500 transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      />
+
+      {/* Right Panel - White with Links */}
+      <div
+        className={`fixed right-0 top-0 bottom-0 w-64 bg-white shadow-2xl z-30 transition-all duration-500 transform overflow-y-auto ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Links Container */}
+        <div className="flex flex-col h-full">
+          {/* Top Spacing */}
+          <div className="h-20" />
+
+          {/* Navigation Links */}
+          <nav className="flex flex-col px-6 gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="py-3 px-4 text-lg font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Bottom Action Buttons */}
+          <div className="mt-auto px-6 pb-8 flex flex-col gap-3">
+            <button className="w-full py-2 px-4 border-2 border-gray-900 text-gray-900 font-semibold rounded-lg hover:bg-gray-900 hover:text-white transition-all duration-200">
+              Sign In
+            </button>
+            <button className="w-full py-2 px-4 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200">
+              Sign Up
+            </button>
+          </div>
         </div>
       </div>
 
-      {menuOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-sm"
-            onClick={() => setMenuOpen(false)}
-          />
-          <div className="fixed inset-y-0 right-0 z-[9999] flex w-72 flex-col border-l border-zinc-200 bg-white px-4 py-6 shadow-2xl sm:px-6">
-            <div className="flex items-center justify-between">
-              <span className="text-base font-semibold text-zinc-900">Menu</span>
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md border border-zinc-300 p-2 text-zinc-700 hover:bg-zinc-50"
-                aria-label="Close menu"
-              >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 6l12 12M6 18L18 6" strokeLinecap="round" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3 text-sm font-medium text-zinc-800">
-              <Link href="/" className="rounded-md px-4 py-3 hover:bg-zinc-100">Home</Link>
-              <Link href="/about" className="rounded-md px-4 py-3 hover:bg-zinc-100">About</Link>
-              <Link href="/contact" className="rounded-md px-4 py-3 hover:bg-zinc-100">Contact</Link>
-            </div>
-          </div>
-        </>
+      {/* Overlay Click to Close */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-transparent z-20"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
       )}
-    </nav>
+
+      {/* Spacer for Fixed Navbar */}
+      <div className="h-20" />
+    </div>
   );
 }
