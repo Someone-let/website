@@ -51,10 +51,10 @@ export default function Navbar() {
       {menuOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
-          <div className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-zinc-200 bg-white px-4 py-6 shadow-2xl sm:px-6">
+          <div className="fixed inset-y-0 right-0 z-[9999] flex w-72 flex-col border-l border-zinc-200 bg-white px-4 py-6 shadow-2xl sm:px-6">
             <div className="flex items-center justify-between">
               <span className="text-base font-semibold text-zinc-900">Menu</span>
               <button
