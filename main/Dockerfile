@@ -1,6 +1,10 @@
 FROM node:20-alpine AS base
 WORKDIR /app
 
+ARG BUILD_AUTH_SECRET=build-time-auth-secret
+ENV AUTH_SECRET=$BUILD_AUTH_SECRET
+ENV NEXTAUTH_SECRET=$BUILD_AUTH_SECRET
+
 COPY package.json package-lock.json ./
 RUN npm install
 
