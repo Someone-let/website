@@ -2,7 +2,7 @@
 
 import { FormEvent, useState, useTransition } from "react";
 import { ImagePlus, Send, Type, FileText } from "lucide-react";
-import { createPost } from "../../../../../../server/actions/form-post";
+import { createPost } from "@/server/actions/form-post";
 
 import { Button } from "@/app/[locale]/components/ui/button";
 import { Card } from "@/app/[locale]/components/ui/card";

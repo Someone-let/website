@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { registerUser } from "../../../../../server/actions/register";
+import { registerUser } from "@/server/actions/register";
 
 import { registerSchema, type RegisterSchemaValues } from "@/types/register-schema";
 import { AuthCard } from "./auth-card";

@@ -1,4 +1,4 @@
-import { getPosts } from "../../../../server/actions/form-post";
+import { getPosts } from "@/server/actions/form-post";
 import AnimatedBackground from "@/app/[locale]/components/ui/background";
 import DashboardClient, {
   type DashboardPost,

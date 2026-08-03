@@ -2,7 +2,7 @@
 
 import { Eye, Search, Star, MessageCircle, Trash2, UserX } from "lucide-react";
 import { useMemo, useState } from "react";
-import { deletePost as deletePostAction } from "../../../../server/actions/delete-post";
+import { deletePost as deletePostAction } from "@/server/actions/delete-post";
 
 export type DashboardPost = {
   id: string;
