@@ -2,13 +2,12 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { registerUser } from "../../../../../server/actions/register";
 
-import { registerSchema } from "@/types/register-schema";
+import { registerSchema, type RegisterSchemaValues } from "@/types/register-schema";
 import { AuthCard } from "./auth-card";
 import { Input } from "@/app/[locale]/components/ui/input";
 import { Button } from "@/app/[locale]/components/ui/button";
@@ -32,7 +31,7 @@ export const RegisterForm = () => {
   const signInRoute = `/${locale}/sign-in`;
   const callbackUrl = `/${locale}`;
 
-  const form = useForm<z.infer<typeof registerSchema>>({
+  const form = useForm<RegisterSchemaValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
@@ -45,7 +44,7 @@ export const RegisterForm = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
+  const onSubmit = async (values: RegisterSchemaValues) => {
     setError("");
     setSuccess("");
     setLoading(true);

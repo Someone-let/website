@@ -7,8 +7,7 @@ import { Button } from "@/app/[locale]/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { loginSchema } from "@/types/login-schema";
-import { z } from "zod";
+import { loginSchema, type LoginSchemaValues } from "@/types/login-schema";
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -26,7 +25,7 @@ import {
 } from "@/app/[locale]/components/ui/field";
 
 export const LoginForm = () => {
-  const form = useForm<z.infer<typeof loginSchema>>({
+  const form = useForm<LoginSchemaValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -44,7 +43,7 @@ export const LoginForm = () => {
   const resetRoute = `/${locale}/reset`;
   const homeRoute = `/${locale}`;
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+  const onSubmit = async (values: LoginSchemaValues) => {
     setLoading(true);
     setError("");
 
