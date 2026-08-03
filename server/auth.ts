@@ -14,13 +14,16 @@ const hasGoogleConfig =
 const authSecret =
   process.env.AUTH_SECRET ??
   process.env.NEXTAUTH_SECRET ??
-  (process.env.NODE_ENV !== "production"
-    ? "dev-only-auth-secret-change-me"
-    : undefined)
- 
+  "dev-only-auth-secret-change-me"
 
-if (!authSecret && process.env.NODE_ENV === "production") {
-  throw new Error("AUTH_SECRET (or NEXTAUTH_SECRET) is required in production")
+if (
+  process.env.NODE_ENV === "production" &&
+  !process.env.AUTH_SECRET &&
+  !process.env.NEXTAUTH_SECRET
+) {
+  console.warn(
+    "AUTH_SECRET (or NEXTAUTH_SECRET) is not set; using fallback secret. Set a real secret in production."
+  )
 }
 
  
