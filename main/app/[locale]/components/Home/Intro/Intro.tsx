@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const highlights = [
   {
@@ -20,6 +23,9 @@ const highlights = [
 ];
 
 export default function Intro() {
+  const pathname = usePathname();
+  const locale = pathname?.split("/")[1] || "en";
+
   return (
     <section className="w-full px-2 py-8 sm:px-6 lg:px-8 lg:py-12">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 rounded-[2rem] border border-gray-200 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:p-10">
@@ -36,13 +42,13 @@ export default function Intro() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/forum"
+              href={`/${locale}/forum`}
               className="rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800"
             >
               Start exploring
             </Link>
             <Link
-              href="/about"
+              href={`/${locale}/about`}
               className="rounded-full border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-300 hover:border-gray-900 hover:text-gray-900"
             >
               Learn more

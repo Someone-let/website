@@ -1,0 +1,14 @@
+{
+  "forum": {
+    "title": "Forum",
+    "description": "Browse discussions and join the conversation."
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About",
+    "forum": "Forum",
+    "contact": "Contact",
+    "signIn": "Sign In",
+    "register": "Register"
+  }
+}

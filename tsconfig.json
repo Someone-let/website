@@ -19,7 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./main/*", "./*"]
     }
   },
   "include": [
@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "main/app/[locale]/components/forum-related/post-form"  ],
   "exclude": ["node_modules"]
 }
