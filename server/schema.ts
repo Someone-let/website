@@ -85,3 +85,13 @@ export const likes = pgTable(
     }),
   })
 );
+
+
+export const comments = pgTable("comment", {
+  id: text("id").primaryKey().$defaultFn(() => createId()),
+  postId: text("postId").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  authorId: text("authorId").references(() => users.id, { onDelete: "set null" }),
+  authorName: text("authorName"),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+});

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useTransition } from "react";
 
 import { toggleLike } from "../../../forum/actions";
+import CommentsSection from "@/app/[locale]/components/ui/Comments-layout";
 
 function isHttpImage(url: string) {
   return /^https?:\/\//i.test(url);
@@ -28,6 +29,7 @@ export default function ForumPost({ post }: ForumPostProps) {
   const [liked, setLiked] = useState(post.likedByViewer);
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [isPending, startTransition] = useTransition();
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   const onToggleLike = () => {
     startTransition(async () => {
@@ -44,7 +46,8 @@ export default function ForumPost({ post }: ForumPostProps) {
   };
 
   return (
-  <article className="group w-full max-w-4xl overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl">
+  <div className="w-full max-w-4xl">
+  <article className="group w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-100 p-6">
         <div className="flex items-center gap-4">
@@ -112,7 +115,11 @@ export default function ForumPost({ post }: ForumPostProps) {
           </button>
 
           {/* Comments */}
-          <button className="flex items-center gap-2 rounded-xl border border-zinc-200 px-4 py-2 transition hover:bg-zinc-100">
+          <button
+            type="button"
+            onClick={() => setIsCommentsOpen((v) => !v)}
+            className={`flex items-center gap-2 rounded-xl border px-4 py-2 transition ${isCommentsOpen ? "border-zinc-400 bg-zinc-100" : "border-zinc-200 hover:bg-zinc-100"}`}
+          >
             <MessageCircle className="h-5 w-5" />
             <span className="font-medium text-zinc-700">
               42
@@ -121,5 +128,7 @@ export default function ForumPost({ post }: ForumPostProps) {
         </div>
       </div>
     </article>
+      {isCommentsOpen && <CommentsSection postId={post.id} />}
+    </div>
   );
 }
