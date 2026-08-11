@@ -1,12 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "..";
 import { auth } from "../auth";
 import { posts } from "../schema";
 import { likes } from "../schema";
 import { users } from "../schema";
+import { comments } from "../schema";
 import { postAddSchema } from "../../types/post-add-schema";
 
 type CreatePostInput = unknown;
@@ -16,7 +17,7 @@ export async function getPosts() {
 		return { error: "Database is not configured", posts: [] };
 	}
 
-	const allPosts = await db.select().from(posts);
+	const allPosts = await db.select().from(posts).orderBy(desc(posts.createdAt));
 	const session = await auth();
 	const viewerEmail = session?.user?.email;
 
@@ -33,6 +34,8 @@ export async function getPosts() {
 
 	const likesRows = await db.select().from(likes);
 	const likesByPost = new Map<string, number>();
+	const commentsRows = await db.select().from(comments);
+	const commentsByPost = new Map<string, number>();
 	const viewerLikedPosts = new Set<string>();
 
 	for (const like of likesRows) {
@@ -44,9 +47,15 @@ export async function getPosts() {
 		}
 	}
 
+	for (const comment of commentsRows) {
+		const count = commentsByPost.get(comment.postId) ?? 0;
+		commentsByPost.set(comment.postId, count + 1);
+	}
+
 	const postsWithMeta = allPosts.map((post) => ({
 		...post,
 		likesCount: likesByPost.get(post.id) ?? 0,
+		commentsCount: commentsByPost.get(post.id) ?? 0,
 		likedByViewer: viewerLikedPosts.has(post.id),
 	}));
 
@@ -71,7 +80,7 @@ export async function createPost(input: CreatePostInput) {
 		};
 	}
 
-	const { title, description, image } = parsed.data;
+	const { title, category, description, image } = parsed.data;
 	const [author] = await db
 		.select({ id: users.id, name: users.name, email: users.email })
 		.from(users)
@@ -85,10 +94,12 @@ export async function createPost(input: CreatePostInput) {
 		.insert(posts)
 		.values({
 			title,
+			category,
 			description,
 			image: image?.trim() ? image : null,
 			authorId: author?.id ?? null,
 			authorName,
+			createdAt: new Date(),
 		})
 		.returning();
 

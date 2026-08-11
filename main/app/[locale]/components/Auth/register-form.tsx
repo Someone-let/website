@@ -3,8 +3,9 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { registerUser } from "@/server/actions/register";
 
 import { registerSchema, type RegisterSchemaValues } from "@/types/register-schema";
@@ -25,11 +26,17 @@ import { FormError } from "@/app/[locale]/components/Auth/form-error";
 import { FormSuccess } from "@/app/[locale]/components/Auth/form-success";
 
 export const RegisterForm = () => {
+  const t = useTranslations("authRegister");
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const locale = pathname?.split("/")[1] || "en";
-  const signInRoute = `/${locale}/sign-in`;
-  const callbackUrl = `/${locale}`;
+  const callbackUrlParam = searchParams.get("callbackUrl");
+  const defaultCallbackUrl = `/${locale}`;
+  const callbackUrl = callbackUrlParam && callbackUrlParam.startsWith("/")
+    ? callbackUrlParam
+    : defaultCallbackUrl;
+  const signInRoute = `/${locale}/sign-in${callbackUrl !== defaultCallbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`;
 
   const form = useForm<RegisterSchemaValues>({
     resolver: zodResolver(registerSchema),
@@ -65,7 +72,7 @@ export const RegisterForm = () => {
       });
 
       if (signInResult?.error) {
-        setSuccess("Account created successfully. Please log in.");
+        setSuccess(t("accountCreated"));
         form.reset();
         router.push(signInRoute);
         return;
@@ -74,7 +81,7 @@ export const RegisterForm = () => {
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError("Network error");
+      setError(t("networkError"));
     } finally {
       setLoading(false);
     }
@@ -82,9 +89,9 @@ export const RegisterForm = () => {
 
   return (
     <AuthCard
-      cardTitle="Create an account."
+      cardTitle={t("cardTitle")}
       backButtonHref={signInRoute}
-      backButtonLabel="Already have an account?"
+      backButtonLabel={t("alreadyHaveAccount")}
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FieldGroup>
@@ -94,10 +101,10 @@ export const RegisterForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Username</FieldLabel>
-                <Input {...field} placeholder="John Doe" />
+                <FieldLabel>{t("username")}</FieldLabel>
+                <Input {...field} placeholder={t("usernamePlaceholder")} />
                 <FieldDescription>
-                  Your display name
+                  {t("usernameDescription")}
                 </FieldDescription>
                 {fieldState.error && (
                   <FieldError errors={[fieldState.error]} />
@@ -112,11 +119,11 @@ export const RegisterForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Email</FieldLabel>
+                <FieldLabel>{t("email")}</FieldLabel>
                 <Input
                   {...field}
                   type="email"
-                  placeholder="john@example.com"
+                  placeholder={t("emailPlaceholder")}
                 />
                 {fieldState.error && (
                   <FieldError errors={[fieldState.error]} />
@@ -131,7 +138,7 @@ export const RegisterForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Password</FieldLabel>
+                <FieldLabel>{t("password")}</FieldLabel>
                 <Input
                   {...field}
                   type="password"
@@ -152,7 +159,7 @@ export const RegisterForm = () => {
           type="submit"
           className={cn("w-full", loading && "animate-pulse")}
         >
-          Register
+          {t("submit")}
         </Button>
 
    

@@ -18,10 +18,10 @@ export default function Hero() {
         }}
       >
 
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center justify-center gap-3 rounded-full border border-white/30 bg-black/50 px-3 py-3 backdrop-blur-sm sm:gap-4 sm:px-5">
+        <div className="absolute bottom-4 left-1/2 flex w-[calc(100%-1.5rem)] max-w-[320px] -translate-x-1/2 flex-col items-stretch justify-center gap-2 rounded-[1.25rem] border border-white/30 bg-black/50 px-3 py-3 backdrop-blur-sm sm:w-auto sm:max-w-none sm:flex-row sm:items-center sm:gap-4 sm:rounded-full sm:px-5">
           <Link
             href={`/${locale}/forum`}
-            className="group rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 hover:shadow-[0_8px_20px_rgba(255,255,255,0.25)]"
+            className="group rounded-full bg-white px-4 py-2 text-center text-sm font-semibold text-gray-900 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 hover:shadow-[0_8px_20px_rgba(255,255,255,0.25)]"
           >
             <span className="transition-transform duration-300 group-hover:translate-x-0.5">
               Get Started
@@ -29,7 +29,7 @@ export default function Hero() {
           </Link>
           <Link
             href={`/${locale}/about`}
-            className="group rounded-full border border-white/40 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(255,255,255,0.15)]"
+            className="group rounded-full border border-white/40 px-4 py-2 text-center text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(255,255,255,0.15)]"
           >
             <span className="transition-transform duration-300 group-hover:translate-x-0.5">
               Learn More

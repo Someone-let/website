@@ -6,15 +6,22 @@ import DashboardClient, {
 
 export default async function DashboardPage() {
   const result = await getPosts();
+  const formatCreatedAt = (value: Date | string) =>
+    new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(value));
+
   const initialPosts: DashboardPost[] = (result.posts ?? []).map((post) => ({
     id: post.id,
     title: post.title,
     description: post.description,
     author: post.authorName ?? "Anonymous",
     stars: post.likesCount ?? 0,
-    comments: 0,
+    comments: post.commentsCount ?? 0,
     image: post.image ?? undefined,
-    createdAt: "Recently",
+    category: post.category ?? "Uncategorized",
+    createdAt: formatCreatedAt(post.createdAt),
   }));
 
   return (

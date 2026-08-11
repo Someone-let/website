@@ -14,7 +14,8 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 import { signIn } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import {
   Field,
@@ -25,6 +26,7 @@ import {
 } from "@/app/[locale]/components/ui/field";
 
 export const LoginForm = () => {
+  const t = useTranslations("authLogin");
   const form = useForm<LoginSchemaValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,10 +40,15 @@ export const LoginForm = () => {
 
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const locale = pathname?.split("/")[1] || "en";
-  const registerRoute = `/${locale}/register`;
-  const resetRoute = `/${locale}/reset`;
+  const callbackUrlParam = searchParams.get("callbackUrl");
   const homeRoute = `/${locale}`;
+  const callbackUrl = callbackUrlParam && callbackUrlParam.startsWith("/")
+    ? callbackUrlParam
+    : homeRoute;
+  const registerRoute = `/${locale}/register${callbackUrl !== homeRoute ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`;
+  const resetRoute = `/${locale}/reset${callbackUrl !== homeRoute ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`;
 
   const onSubmit = async (values: LoginSchemaValues) => {
     setLoading(true);
@@ -51,34 +58,35 @@ export const LoginForm = () => {
       redirect: false,
       email: values.email,
       password: values.password,
+      callbackUrl,
     });
 
     setLoading(false);
 
     if (res?.error) {
-      setError("Invalid email or password");
+      setError(t("invalidCredentials"));
       return;
     }
 
-    router.push(homeRoute);
+    router.push(callbackUrl);
   };
 
   return (
     <AuthCard
-      cardTitle="Welcome Back"
+      cardTitle={t("cardTitle")}
       backButtonHref={registerRoute}
-      backButtonLabel="Register"
+      backButtonLabel={t("register")}
       showSocial
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           {/* EMAIL */}
           <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("emailPlaceholder")}
               {...form.register("email")}
               autoComplete="email"
             />
@@ -89,7 +97,7 @@ export const LoginForm = () => {
 
           {/* PASSWORD */}
           <Field>
-            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
             <Input
               id="password"
               type="password"
@@ -105,7 +113,7 @@ export const LoginForm = () => {
 
         <div className="mt-2">
           <Button size="sm" variant="link">
-            <Link href={resetRoute}>Forgot your password?</Link>
+            <Link href={resetRoute}>{t("forgotPassword")}</Link>
           </Button>
         </div>
 
@@ -117,7 +125,7 @@ export const LoginForm = () => {
           type="submit"
           className={cn("w-full mt-4", loading && "animate-pulse")}
         >
-          Login
+          {t("submit")}
         </Button>
       </form>
     </AuthCard>

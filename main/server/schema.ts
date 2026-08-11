@@ -71,6 +71,8 @@ export const posts = pgTable("post", {
   image: text("image"),
   authorId: text("authorId").references(() => users.id, { onDelete: "set null" }),
   authorName: text("authorName"),
+  category: text("category"),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const likes = pgTable(

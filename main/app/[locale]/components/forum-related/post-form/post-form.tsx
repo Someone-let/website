@@ -1,7 +1,9 @@
 "use client";
 
 import { FormEvent, useState, useTransition } from "react";
-import { ImagePlus, Send, Type, FileText } from "lucide-react";
+import { ImagePlus, Send, Type, FileText, Tag } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { createPost } from "@/server/actions/form-post";
 
 import { Button } from "@/app/[locale]/components/ui/button";
@@ -11,11 +13,15 @@ import { Textarea } from "@/app/[locale]/components/ui/textarea";
 
 type CreatePostFormProps = {
   onCancel?: () => void;
+  onAuthRequired?: () => void;
   onPostCreated?: () => void | Promise<void>;
 };
 
-export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFormProps) {
+export default function CreatePostForm({ onCancel, onAuthRequired, onPostCreated }: CreatePostFormProps) {
+  const t = useTranslations("postForm");
+  const { status } = useSession();
   const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [error, setError] = useState("");
@@ -27,9 +33,15 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
     setError("");
     setSuccess("");
 
+    if (status !== "authenticated") {
+      onAuthRequired?.();
+      return;
+    }
+
     startTransition(async () => {
       const result = await createPost({
         title,
+        category,
         description,
         image: image || undefined,
       });
@@ -39,8 +51,9 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
         return;
       }
 
-      setSuccess(result?.success ?? "Post published successfully");
+      setSuccess(result?.success ?? t("defaultSuccess"));
       setTitle("");
+      setCategory("");
       setDescription("");
       setImage("");
       await onPostCreated?.();
@@ -51,11 +64,11 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
     <Card className="mx-auto max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-3xl border-zinc-200 p-5 shadow-sm sm:max-h-[calc(100vh-3rem)] sm:p-8">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">
-          Create Post
+          {t("title")}
         </h2>
 
         <p className="text-sm text-zinc-500">
-          Share your question, idea, or discussion with the community.
+          {t("description")}
         </p>
       </div>
 
@@ -64,7 +77,7 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
             <Type size={16} />
-            Title
+            {t("fieldTitle")}
           </label>
 
           <Input
@@ -72,7 +85,23 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
             onChange={(event) => setTitle(event.target.value)}
             required
             minLength={6}
-            placeholder="Enter an engaging title..."
+            placeholder={t("titlePlaceholder")}
+            className="h-12 rounded-xl border-zinc-200"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
+            <Tag size={16} />
+            {t("fieldCategory")}
+          </label>
+
+          <Input
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            required
+            minLength={2}
+            placeholder={t("categoryPlaceholder")}
             className="h-12 rounded-xl border-zinc-200"
           />
         </div>
@@ -81,7 +110,7 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
             <FileText size={16} />
-            Description
+            {t("fieldDescription")}
           </label>
 
           <Textarea
@@ -89,7 +118,7 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
             onChange={(event) => setDescription(event.target.value)}
             required
             minLength={10}
-            placeholder="Tell everyone what your post is about..."
+            placeholder={t("descriptionPlaceholder")}
             className="min-h-[140px] resize-none rounded-xl border-zinc-200 sm:min-h-[180px]"
           />
         </div>
@@ -98,14 +127,14 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
             <ImagePlus size={16} />
-            Image URL (Optional)
+            {t("fieldImage")}
           </label>
 
           <Input
             value={image}
             onChange={(event) => setImage(event.target.value)}
             type="url"
-            placeholder="https://example.com/your-image.jpg"
+            placeholder={t("imagePlaceholder")}
             className="h-12 rounded-xl border-zinc-200"
           />
         </div>
@@ -127,7 +156,7 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
             className="rounded-xl border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-800"
             onClick={onCancel}
           >
-            Cancel
+            {t("cancel")}
           </Button>
 
           <Button
@@ -136,7 +165,7 @@ export default function CreatePostForm({ onCancel, onPostCreated }: CreatePostFo
             className="rounded-xl bg-black px-6 hover:bg-zinc-800"
           >
             <Send className="mr-2 h-4 w-4" />
-            {isPending ? "Publishing..." : "Publish Post"}
+            {isPending ? t("publishing") : t("publish")}
           </Button>
         </div>
       </form>

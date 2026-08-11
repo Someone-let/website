@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { desc, eq } from "drizzle-orm";
 
 import { db } from "..";
 import { comments } from "../schema";
@@ -30,4 +31,23 @@ export async function createComment(postId: string, content: string) {
     console.error("CREATE_COMMENT_ERROR:", error);
     return { success: false, error: "Failed to create comment" };
   }
+}
+
+export async function getCommentsForPost(postId: string) {
+  if (!db) {
+    return { comments: [] };
+  }
+
+  const rows = await db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      createdAt: comments.createdAt,
+      authorName: comments.authorName,
+    })
+    .from(comments)
+    .where(eq(comments.postId, postId))
+    .orderBy(desc(comments.createdAt));
+
+  return { comments: rows };
 }

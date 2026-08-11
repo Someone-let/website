@@ -1,9 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
 import "./globals.css";
-import Navbar from "./[locale]/components/Home/navigation/Navbar";
 import { SessionProvider } from "./[locale]/components/SessionProvider";
 
 const geistSans = Geist({
@@ -26,8 +23,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const messages = await getMessages({ locale: "en" });
-
   return (
     <html
       lang="en"
@@ -35,12 +30,9 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <NextIntlClientProvider locale="en" messages={messages}>
-          <SessionProvider>
-            <Navbar />
-            {children}
-          </SessionProvider>
-        </NextIntlClientProvider>
+        <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@ import * as z from "zod";
 
 export const postAddSchema = z.object({
     title: z.string().min(6, "Title must be at least 6 characters long"),
+    category: z.string().min(2, "Category must be at least 2 characters long"),
     description: z
         .string()
         .min(10, "Description must be at least 10 characters long"),

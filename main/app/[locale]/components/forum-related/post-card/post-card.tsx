@@ -1,8 +1,9 @@
 "use client";
 
-import { Star, MessageCircle, UserRoundX } from "lucide-react";
+import { Star, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 
 import { toggleLike } from "../../../forum/actions";
 import CommentsSection from "@/app/[locale]/components/ui/Comments-layout";
@@ -15,19 +16,31 @@ type ForumPostProps = {
   post: {
     id: string;
     title: string;
+    category: string | null;
     description: string;
     image: string | null;
     authorName: string | null;
+    createdAt: Date;
     likesCount: number;
     likedByViewer: boolean;
+    commentsCount: number;
   };
 };
 
+function formatPostTime(value: Date | string) {
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
 export default function ForumPost({ post }: ForumPostProps) {
+  const t = useTranslations("postCard");
   const imageUrl = post.image?.trim() ?? "";
   const showImage = imageUrl.length > 0 && isHttpImage(imageUrl);
   const [liked, setLiked] = useState(post.likedByViewer);
   const [likesCount, setLikesCount] = useState(post.likesCount);
+  const [commentsCount, setCommentsCount] = useState(post.commentsCount);
   const [isPending, startTransition] = useTransition();
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
@@ -46,22 +59,30 @@ export default function ForumPost({ post }: ForumPostProps) {
   };
 
   return (
-  <div className="w-full max-w-4xl">
+  <div id={post.id} className="w-full max-w-4xl">
   <article className="group w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-100 p-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition group-hover:bg-black group-hover:text-white">
-            <UserRoundX className="h-6 w-6 " />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black text-sm font-semibold text-white">
+            {post.authorName
+              ? post.authorName
+                  .split(" ")
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((name) => name[0])
+                  .join("")
+                  .toUpperCase()
+              : "?"}
           </div>
 
           <div>
             <h3 className="font-semibold text-zinc-900">
-              {post.authorName || "Anonymous User"}
+              {post.authorName || t("anonymous")}
             </h3>
 
             <p className="text-sm text-zinc-500">
-              Posted 2 hours ago
+              {t("posted")} {formatPostTime(post.createdAt)}
             </p>
           </div>
         </div>
@@ -70,6 +91,12 @@ export default function ForumPost({ post }: ForumPostProps) {
       {/* Content */}
       <div className="space-y-5 p-6">
         <div>
+          {post.category ? (
+            <span className="inline-flex rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium uppercase tracking-[0.15em] text-zinc-600">
+              {post.category}
+            </span>
+          ) : null}
+
           <h2 className="text-2xl font-bold tracking-tight text-black">
             {post.title}
           </h2>
@@ -122,13 +149,19 @@ export default function ForumPost({ post }: ForumPostProps) {
           >
             <MessageCircle className="h-5 w-5" />
             <span className="font-medium text-zinc-700">
-              42
+              {commentsCount}
             </span>
           </button>
         </div>
       </div>
     </article>
-      {isCommentsOpen && <CommentsSection postId={post.id} />}
+      {isCommentsOpen ? (
+        <CommentsSection
+          postId={post.id}
+          initialCommentCount={post.commentsCount}
+          onCommentCountChange={setCommentsCount}
+        />
+      ) : null}
     </div>
   );
 }

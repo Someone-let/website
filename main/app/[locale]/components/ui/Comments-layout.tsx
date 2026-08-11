@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { MessageCircle, MoreHorizontal, Reply, Send, Star } from "lucide-react";
-import { createComment } from "@/app/[locale]/forum/actions";
+import { createComment, getCommentsForPost } from "@/app/[locale]/forum/actions";
 
 type Comment = {
   id: string;
@@ -14,13 +14,55 @@ type Comment = {
 
 type CommentsSectionProps = {
   postId: string;
+  initialCommentCount?: number;
+  onCommentCountChange?: (count: number) => void;
 };
 
-export default function CommentsSection({ postId }: CommentsSectionProps) {
+function formatCommentTime(value?: Date | string | null) {
+  if (!value) return "Just now";
+
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(value));
+  } catch {
+    return "Just now";
+  }
+}
+
+export default function CommentsSection({ postId, initialCommentCount = 0, onCommentCountChange }: CommentsSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
+  const [commentCount, setCommentCount] = useState(initialCommentCount);
   const [text, setText] = useState("");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+
+    startTransition(async () => {
+      const result = await getCommentsForPost(postId);
+
+      if (!isActive) return;
+
+      const mappedComments: Comment[] = (result.comments ?? []).map((comment) => ({
+        id: comment.id,
+        user: comment.authorName || "Anonymous",
+        time: formatCommentTime(comment.createdAt),
+        text: comment.content,
+        stars: 0,
+      }));
+
+      setComments(mappedComments);
+      setCommentCount(mappedComments.length);
+      onCommentCountChange?.(mappedComments.length);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [onCommentCountChange, postId]);
 
   const submitComment = () => {
     if (!text.trim()) return;
@@ -43,6 +85,8 @@ export default function CommentsSection({ postId }: CommentsSectionProps) {
       };
 
       setComments((prev) => [newComment, ...prev]);
+      setCommentCount((prev) => prev + 1);
+      onCommentCountChange?.(commentCount + 1);
       setText("");
     });
   };
@@ -62,7 +106,7 @@ export default function CommentsSection({ postId }: CommentsSectionProps) {
           </div>
 
           <p className="mt-1 text-sm text-neutral-500">
-            {comments.length} thoughts on this post
+            {commentCount} thoughts on this post
           </p>
         </div>
 
@@ -73,6 +117,12 @@ export default function CommentsSection({ postId }: CommentsSectionProps) {
 
       {/* Comments */}
       <div className="space-y-3">
+
+        {comments.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 px-5 py-6 text-center text-sm text-neutral-500">
+            No comments yet. Be the first to share your thoughts.
+          </div>
+        ) : null}
 
         {comments.map((comment) => (
           <article

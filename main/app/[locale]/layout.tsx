@@ -1,6 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ReactNode } from "react";
+import Navbar from "@/app/[locale]/components/Home/navigation/Navbar";
 
 export default async function LocaleLayout({
   children,
@@ -14,6 +15,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      <Navbar />
       {children}
     </NextIntlClientProvider>
   );

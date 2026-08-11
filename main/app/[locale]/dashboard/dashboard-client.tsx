@@ -2,6 +2,8 @@
 
 import { Eye, Search, Star, MessageCircle, Trash2, UserX } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { deletePost as deletePostAction } from "@/server/actions/delete-post";
 
 export type DashboardPost = {
@@ -9,6 +11,7 @@ export type DashboardPost = {
   title: string;
   description: string;
   author: string;
+  category: string;
   stars: number;
   comments: number;
   image?: string;
@@ -20,8 +23,12 @@ type DashboardClientProps = {
 };
 
 export default function DashboardClient({ initialPosts }: DashboardClientProps) {
+  const t = useTranslations("dashboard");
   const [posts, setPosts] = useState(initialPosts);
   const [search, setSearch] = useState("");
+  const params = useParams();
+  const router = useRouter();
+  const locale = (params.locale as string) ?? "en";
 
   const filtered = useMemo(() => {
     return posts.filter((p) =>
@@ -30,12 +37,12 @@ export default function DashboardClient({ initialPosts }: DashboardClientProps) 
   }, [posts, search]);
 
   async function deletePost(id: string) {
-    if (!confirm("Delete this post?")) return;
+    if (!confirm(t("deleteConfirm"))) return;
 
     const result = await deletePostAction(id);
 
     if (!result.success) {
-      alert(result.error ?? "Failed to delete post");
+      alert(result.error ?? t("deleteFailed"));
       return;
     }
 
@@ -47,8 +54,8 @@ export default function DashboardClient({ initialPosts }: DashboardClientProps) 
       <header className="sticky top-0 z-20 border-b border-white/10 bg-black/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div>
-            <h1 className="text-3xl font-bold">Moderation Dashboard</h1>
-            <p className="mt-1 text-sm text-zinc-500">Manage community posts</p>
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="mt-1 text-sm text-zinc-500">{t("subtitle")}</p>
           </div>
 
           <div className="relative w-80 max-w-full">
@@ -57,7 +64,7 @@ export default function DashboardClient({ initialPosts }: DashboardClientProps) 
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search posts..."
+              placeholder={t("searchPlaceholder")}
               className="w-full rounded-2xl border border-white/10 bg-zinc-950 py-3 pl-11 pr-4 outline-none transition focus:border-white"
             />
           </div>
@@ -65,15 +72,15 @@ export default function DashboardClient({ initialPosts }: DashboardClientProps) 
       </header>
 
       <main className="mx-auto max-w-7xl p-6">
-        <h2 className="mb-6 text-xl font-semibold">Posts ({filtered.length})</h2>
+        <h2 className="mb-6 text-xl font-semibold">{t("postsCount", { count: filtered.length })}</h2>
 
         {filtered.length === 0 ? (
           <div className="flex h-96 flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-zinc-950">
             <UserX className="mb-5 h-16 w-16 text-zinc-700" />
 
-            <h3 className="text-2xl font-semibold">No posts found</h3>
+            <h3 className="text-2xl font-semibold">{t("noPosts")}</h3>
 
-            <p className="mt-2 text-zinc-500">Try another search.</p>
+            <p className="mt-2 text-zinc-500">{t("tryAnotherSearch")}</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -105,6 +112,8 @@ export default function DashboardClient({ initialPosts }: DashboardClientProps) 
 
                   <h3 className="text-xl font-bold">{post.title}</h3>
 
+                  <p className="mt-2 text-xs font-medium uppercase tracking-[0.15em] text-zinc-500">{post.category}</p>
+
                   <p className="mt-3 line-clamp-3 text-sm leading-7 text-zinc-400">{post.description}</p>
 
                   <div className="mt-6 flex items-center gap-6 text-sm text-zinc-500">
@@ -120,9 +129,12 @@ export default function DashboardClient({ initialPosts }: DashboardClientProps) 
                   </div>
 
                   <div className="mt-7 flex gap-3">
-                    <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white py-3 font-medium text-black transition hover:scale-[1.02]">
+                    <button
+                      onClick={() => router.push(`/${locale}/forum#${post.id}`)}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white py-3 font-medium text-black transition hover:scale-[1.02]"
+                    >
                       <Eye size={18} />
-                      View
+                      {t("view")}
                     </button>
 
                     <button
