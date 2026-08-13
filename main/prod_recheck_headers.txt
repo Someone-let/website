@@ -1,0 +1,12 @@
+HTTP/1.1 302 Found
+Date: Thu, 13 Aug 2026 12:44:19 GMT
+location: https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=302935173515-im83aafp189coourcr2olik9j9o2olpr.apps.googleusercontent.com&redirect_uri=https%3A%2F%2F359cf1b8ba65%3A8080%2Fapi%2Fauth%2Fcallback%2Fgoogle&code_challenge=HIVghWquNl3rg3xrweDjXMFqgtxAR987edyoeMr-ebw&code_challenge_method=S256&scope=openid+profile+email
+Server: railway-hikari
+Set-Cookie: __Secure-authjs.pkce.code_verifier=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoibFpSblhWbjFwaFJmZVhhc0dyeXp3ZFd5TUtpNlY3X2xqVVhOaTR5cjdnallZclRpYXNMQWhfUHlCckdHQWVCNlFZOTJzWGJRei1KQ09SeGxRYlM0b0EifQ..ca99UHvOLywUGMJaA20Smg.t7d1P-LrKmC-pJmjY3e7xl8OoNamlwtQhcgJTRiGWT_P-Ot8jUZM6WiMHMYFkB2pVpTpI39gezqNQWJv78FJ22lTy3ve14mT5TePDF2mjyrUyLpH-r5cVYL_qp9nfHio8bp_piVLmwXvFgzFTXw_kI-27yJ_0iN2betSB65Uqzef5GqqSAs6a7kM0FI1W7KRgSyp5Xk4QLI8LxMppsXLDw.ubIRPcWG4o2qKAd8S7c5QF1mlEMc1uUKsINwh2gVsSU; Max-Age=900; Path=/; Expires=Thu, 13 Aug 2026 12:59:19 GMT; HttpOnly; Secure; SameSite=Lax
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-railway-request-id: xtxkRPSXR4yf1jBHlt7tkg
+Transfer-Encoding: chunked
+x-hikari-trace: ber1.bpxb
+x-railway-edge: ber1
+Connection: keep-alive
+
