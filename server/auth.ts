@@ -7,6 +7,15 @@ import bcrypt from "bcryptjs"
 import { db } from "./index"
 import { accounts, users } from "./schema"
 
+// Auto-set AUTH_URL from Railway's auto-generated public domain if not explicitly provided
+if (
+  !process.env.AUTH_URL &&
+  !process.env.NEXTAUTH_URL &&
+  process.env.RAILWAY_PUBLIC_DOMAIN
+) {
+  process.env.AUTH_URL = `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+}
+
 const hasGoogleConfig =
   Boolean(process.env.GOOGLE_ID) &&
   Boolean(process.env.GOOGLE_SECRET)
