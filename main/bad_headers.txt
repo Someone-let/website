@@ -1,0 +1,8 @@
+HTTP/1.1 302 Found
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+location: http://localhost:3000/api/auth/signin?error=CredentialsSignin&code=credentials
+Date: Thu, 13 Aug 2026 12:09:11 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+

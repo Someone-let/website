@@ -1,0 +1,10 @@
+HTTP/1.1 302 Found
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+location: http://localhost:3000/en
+set-cookie: authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fen; Path=/; HttpOnly; SameSite=Lax
+set-cookie: authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiV0hIVF9rdDdPd2tJNk9BQmJ4dzM5SlAxYlhMUVg4UDJJVUliX3NFeUpPdk1wS0JlM2hiYnVPdEluV1k3ZFdjWGFVZ0tZU1VUZUdKdTdXQkltQUJLZVEifQ..CVYPX7-0z8AYyizkPmnfnA.Md8ph1XWJsYwA-uTu4Sy_Xr78WF6SYWMyL-eEjCuVx6zHq91mSapCdIcT0b8n54XF5fvSsDaexP3HSa9bkv4i9yJmBiRfply3XJgt5B5OI-sAJrgI2MCK9RsCZTHteTOd91nr0NgfkW2G5O7SX-6klWSOKGtZSStCA7IXqY_w6ncD0KBIqu6Bem8PrLQxTLaI9MaIxiEUOx5KEYIQL5CMPNaz0QcsDV3niC6bUN5E4d-0ZTVZkr5pgGK8ueBp6l7V1fUt-VNIFso5gvzDkCDsA.MC0WgqALy9uEAOYN1xLhZ8w6_DQbPavlrnGHDzL_uu4; Path=/; Expires=Sat, 12 Sep 2026 12:09:24 GMT; HttpOnly; SameSite=Lax
+Date: Thu, 13 Aug 2026 12:09:24 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+

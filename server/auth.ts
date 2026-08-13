@@ -16,6 +16,12 @@ const authSecret =
   process.env.NEXTAUTH_SECRET ??
   "dev-only-auth-secret-change-me"
 
+const trustHost =
+  process.env.AUTH_TRUST_HOST === "true" ||
+  process.env.NEXTAUTH_URL !== undefined ||
+  process.env.AUTH_URL !== undefined ||
+  process.env.NODE_ENV === "production"
+
 if (
   process.env.NODE_ENV === "production" &&
   !process.env.AUTH_SECRET &&
@@ -28,6 +34,7 @@ if (
 
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost,
   providers: [
     ...(hasGoogleConfig
       ? [
